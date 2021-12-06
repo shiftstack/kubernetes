@@ -22,7 +22,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/mholt/caddy/caddyfile"
+	"github.com/caddyserver/caddy/caddyfile"
 
 	apps "k8s.io/api/apps/v1"
 	"k8s.io/api/core/v1"
