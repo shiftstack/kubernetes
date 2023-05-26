@@ -84,13 +84,13 @@ func NodeAddress(nodeIPs []net.IP, // typically Kubelet.nodeIPs
 			if err := validateNodeIPFunc(nodeIP); err != nil {
 				return fmt.Errorf("failed to validate nodeIP: %v", err)
 			}
-			klog.V(4).InfoS("Using node IP", "IP", nodeIP.String())
+			klog.V(1).InfoS("Using node IP", "IP", nodeIP.String())
 		}
 		if secondaryNodeIPSpecified {
 			if err := validateNodeIPFunc(secondaryNodeIP); err != nil {
 				return fmt.Errorf("failed to validate secondaryNodeIP: %v", err)
 			}
-			klog.V(4).InfoS("Using secondary node IP", "IP", secondaryNodeIP.String())
+			klog.V(1).InfoS("Using secondary node IP", "IP", secondaryNodeIP.String())
 		}
 
 		if (externalCloudProvider || cloud != nil) && nodeIPSpecified {
@@ -109,7 +109,11 @@ func NodeAddress(nodeIPs []net.IP, // typically Kubelet.nodeIPs
 			if node.ObjectMeta.Annotations == nil {
 				node.ObjectMeta.Annotations = make(map[string]string)
 			}
-			node.ObjectMeta.Annotations[cloudproviderapi.AnnotationAlphaProvidedIPAddr] = nodeIP.String()
+			annotation := nodeIP.String()
+			if secondaryNodeIPSpecified {
+				annotation += "," + secondaryNodeIP.String()
+			}
+			node.ObjectMeta.Annotations[cloudproviderapi.AnnotationAlphaProvidedIPAddr] = annotation
 		} else if node.ObjectMeta.Annotations != nil {
 			// Clean up stale annotations if no longer using a cloud provider or
 			// no longer overriding node IP.
